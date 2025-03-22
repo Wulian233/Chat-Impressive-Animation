@@ -1,8 +1,11 @@
 package com.wulian.chatimpressiveanimation.mixin;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.brigadier.Message;
 import com.wulian.chatimpressiveanimation.config.ConfigUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.gui.screen.ChatScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -11,59 +14,78 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.List;
+
 @Mixin(ChatScreen.class)
 public class ChatScreenMixin {
 	@Unique private boolean wasOpenedLastFrame = false;
 	@Unique private boolean isClosing = false;
-	@Unique private long lastOpenTime = 0;
-	@Unique private long closeStartTime = 0;
+	@Unique private long animationStartTime = 0;
 	@Unique private float offsetY = 0;
 
-	private static final float FADE_TIME = 170;
-	private static final float FADE_OFFSET = 8;
-	private static final float C1 = 1.70158f;
-	private static final float C3 = C1 + 1;
+	private static final int FADE_TIME = ConfigUtil.getConfig().chatBarAnimationFadeTime;
+	private static final float FADE_OFFSET = 10;
+	private static final float EASE_IN_OUT_FACTOR = 1.70158f;
+	private static final float EASE_OUT_FACTOR = EASE_IN_OUT_FACTOR + 1;
+
+	public final MinecraftClient client = MinecraftClient.getInstance();
 
 	@Inject(method = "render", at = @At("HEAD"))
 	private void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		if (!ConfigUtil.getConfig().enableChatBarAnimation) return;
 
-		MinecraftClient client = MinecraftClient.getInstance();
-		if (client.player != null) {
-			if (!wasOpenedLastFrame && !client.player.isSleeping()) {
-				wasOpenedLastFrame = true;
-				lastOpenTime = System.currentTimeMillis();
-				isClosing = false;
-			}
+		if (client.player != null && !wasOpenedLastFrame && !client.player.isSleeping()) {
+			wasOpenedLastFrame = true;
+			animationStartTime = System.currentTimeMillis();
+			isClosing = false;
 		}
 
-		float screenFactor = (float)client.getWindow().getHeight() / 1080;
-		float timeSinceOpen = Math.min((float)(System.currentTimeMillis() - lastOpenTime), FADE_TIME);
-		float alpha = 1 - (timeSinceOpen / FADE_TIME);
+		float screenFactor = (float) client.getWindow().getHeight() / 1080;
+		float elapsedTime = (float) (System.currentTimeMillis() - animationStartTime);
+		float alpha = isClosing ? elapsedTime / FADE_TIME : 1 - (elapsedTime / FADE_TIME);
+		alpha = Math.min(1, Math.max(0, alpha));
 
-		float modifiedAlpha = C3 * alpha * alpha * alpha - C1 * alpha * alpha;
+		float easedAlpha = EASE_OUT_FACTOR * alpha * alpha * alpha - EASE_IN_OUT_FACTOR * alpha * alpha;
+		offsetY = easedAlpha * FADE_OFFSET * screenFactor;
 
-		offsetY = modifiedAlpha * FADE_OFFSET * screenFactor;
-
-		if (!isClosing) {
-			context.getMatrices().translate(0, offsetY, 0);
-		} else {
-			float timeSinceClose = Math.min((float)(System.currentTimeMillis() - closeStartTime), FADE_TIME);
-			float closeAlpha = timeSinceClose / FADE_TIME;
-			float modifiedCloseAlpha = C3 * closeAlpha * closeAlpha * closeAlpha - C1 * closeAlpha * closeAlpha;
-			offsetY = modifiedCloseAlpha * FADE_OFFSET * screenFactor;
-			context.getMatrices().translate(0, offsetY, 0);
+		if (isClosing) {
+			RenderSystem.enableBlend();
+			RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f - easedAlpha);
 		}
+
+		context.getMatrices().push();
+		context.getMatrices().translate(0, offsetY, 0);
 	}
 
+	@Unique
+	private boolean hasActiveChatMessages() {
+		if (client.inGameHud == null || client.inGameHud.getChatHud() == null) return false;
+
+		List<Message> messages = ((ChatHudAccessor) client.inGameHud.getChatHud()).getVisibleMessages();
+
+		int ticks = client.inGameHud.getTicks();
+		final int fadeTicks = 200;
+
+		for (Object msg : messages) {
+			if (msg instanceof ChatHudLine line) {
+				int creationTick = ((ChatHudLineAccessor) (Object) line).getCreationTick();
+				if (ticks - creationTick < fadeTicks) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	//	Don't remove cancellable attribute!
 	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
 	private void onKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
 		if (keyCode == 256) { // ESC
-			if (ConfigUtil.getConfig().enableChatBarAnimation) {
+			if (ConfigUtil.getConfig().enableChatBarAnimation && !hasActiveChatMessages()) {
 				isClosing = true;
-				closeStartTime = System.currentTimeMillis();
+				animationStartTime = System.currentTimeMillis();
 			} else {
-				MinecraftClient.getInstance().setScreen(null);
+				client.setScreen(null);
 			}
 			cir.cancel();
 		}
@@ -72,12 +94,13 @@ public class ChatScreenMixin {
 	@Inject(method = "render", at = @At("TAIL"))
 	private void renderEnd(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		if (!ConfigUtil.getConfig().enableChatBarAnimation) return;
+		context.getMatrices().pop();
 		if (isClosing) {
-			MinecraftClient client = MinecraftClient.getInstance();
-			if ((System.currentTimeMillis() - closeStartTime) >= FADE_TIME) {
-				client.setScreen(null);
-			}
+			RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+			RenderSystem.disableBlend();
+		}
+		if (isClosing && (System.currentTimeMillis() - animationStartTime) >= FADE_TIME) {
+			client.setScreen(null);
 		}
 	}
 }
-

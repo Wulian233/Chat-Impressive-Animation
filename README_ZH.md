@@ -19,7 +19,6 @@
 <a href="https://www.curseforge.com/minecraft/mc-mods/chat-impressive-animation">
 <img alt="curseforge" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/curseforge_vector.svg">
 </a>
-<img alt="architectury-api" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/requires/architectury-api_vector.svg">
 </div>
 
 ## 📖 这个模组是什么？
@@ -44,12 +43,6 @@
 
 <img src="img/preview.gif" width="350"/>
 
-## 📖 使用
-
-使用这个模组非常简单！
-
-首先需要安装前置模组Cloth Config API，然后即可安装本模组使用啦！
-
 ## 👀 协议
 
-此模组使用MIT许可证
+此模组使用[MIT许可证](LICENSE)
