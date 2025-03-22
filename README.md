@@ -11,7 +11,7 @@
 
 [Chat Animation](https://github.com/Ezzenix/ChatAnimation) unofficial architectury port.
 
-This mod makes the chat look better by adding animations. Such as opening chat, sending messages. It also removes the message indicator.
+Makes the chat look better by adding animations, such as opening/closing the chat bar, sending messages, etc. It also removes the message indicator
 
 <a href="https://modrinth.com/project/chat-impressive-animation/">
 <img alt="modrinth" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg">
@@ -19,29 +19,32 @@ This mod makes the chat look better by adding animations. Such as opening chat, 
 <a href="https://www.curseforge.com/minecraft/mc-mods/chat-impressive-animation">
 <img alt="curseforge" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/curseforge_vector.svg">
 </a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/cloth-config">
+<img alt="cloth-config-api" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/requires/cloth-config-api_vector.svg">
+</a>
 </div>
 
 ## 📖 What's this mod? 
 
-Chat Impressive Animation(CIA) is [Chat Animation](https://github.com/Ezzenix/ChatAnimation)'s unofficial architectury port, now available on Fabric and Neoforge. 
+Chat Impressive Animation (CIA) is developed based on [Chat Animation](https://github.com/Ezzenix/ChatAnimation).
+Compared to the original mod, this mod adds more animation effects and detailed designs, and includes a configuration file to freely customize each feature.
+Most importantly, this mod supports Fabric, Forge, and Neoforge, all of which are required.
 
-For mc versions 1.20.4 and earlier, Forge support is also provided, but message sending animations is not supported.
-
-This mod makes the chat look better by adding animations. Such as opening chat, sending messages. It also removes the message indicator.
+For mc versions 1.20.4 and below, Forge support is also provided, but message sending animations are not supported.
 
 ## ✅ Features
 
-- Open chat animation
-- Closing chat animation
+All features can be individually configured in the configuration file!
+
+- Open chat bar animation
+- Close chat bar animation
 - Message sending animation (Unsupported Forge)
-- Removes the message indicator (mc1.19.1+)
+- Configuration of animation duration
+- Fade-in and fade-out animations for messages
+- Removes the message indicator (Added in mc1.19.1)
 
 ## ✨ Screenshots
 
 <img src="img/message-indicator.jpg" width="550"/>
 
-<img src="img/preview.gif" width="350"/>
-
-## 👀 License
-
-This mod is available under the [MIT license](LICENSE).
+<img src="img/preview.gif" width="450"/>
