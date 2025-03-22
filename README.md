@@ -19,7 +19,6 @@ This mod makes the chat look better by adding animations. Such as opening chat, 
 <a href="https://www.curseforge.com/minecraft/mc-mods/chat-impressive-animation">
 <img alt="curseforge" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/curseforge_vector.svg">
 </a>
-<img alt="architectury-api" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.2.0/assets/cozy/requires/cloth-config-api_vector.svg">
 </div>
 
 ## 📖 What's this mod? 
@@ -35,19 +34,13 @@ This mod makes the chat look better by adding animations. Such as opening chat, 
 - Open chat animation
 - Closing chat animation
 - Message sending animation (Unsupported Forge)
-- Removes the message indicator(mc1.19.1+)
+- Removes the message indicator (mc1.19.1+)
 
 ## ✨ Screenshots
 
 <img src="img/message-indicator.jpg" width="550"/>
 
 <img src="img/preview.gif" width="350"/>
-
-## 📖 Usage
-
-Using this mod is very simple!
-
-First of all, you need to install Cloth Config API, and then you can install this mod and use it!
 
 ## 👀 License
 
