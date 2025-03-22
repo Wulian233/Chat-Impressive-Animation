@@ -1,11 +1,13 @@
 {
 	"fml.menu.mods.info.displayname.chatimpressiveanimation": "聊動魅影",
-	"fml.menu.mods.info.description.chatimpressiveanimation": "添加了一些關於聊天欄的動畫，如打開聊天欄，發送消息等。同時刪除了提示類消息左側的白條",
+	"fml.menu.mods.info.description.chatimpressiveanimation": "添加了一些關於聊天屏幕的動畫，如打開/關閉聊天欄，發送訊息等。同時刪除了系統訊息左側的指示器白條",
 	"modmenu.nameTranslation.chatimpressiveanimation": "聊動魅影",
-	"modmenu.descriptionTranslation.chatimpressiveanimation": "添加了一些關於聊天欄的動畫，如打開聊天欄，發送消息等。同時刪除了提示類消息左側的白條",
+	"modmenu.descriptionTranslation.chatimpressiveanimation": "添加了一些關於聊天屏幕的動畫，如打開/關閉聊天欄，發送訊息等。同時刪除了系統訊息左側的指示器白條",
 
 	"text.autoconfig.chatimpressiveanimation.title": "聊動魅影",
-	"text.autoconfig.chatimpressiveanimation.option.enableChatSendingAnimation": "啟用消息發送動畫",
-	"text.autoconfig.chatimpressiveanimation.option.enableChatBarAnimation": "啟用打開和關閉時的聊天欄動畫",
-	"text.autoconfig.chatimpressiveanimation.option.removeMessageIndicator": "刪除提示類消息左側的白條"
+	"text.autoconfig.chatimpressiveanimation.option.enableChatSendingAnimation": "啟用訊息發送動畫",
+	"text.autoconfig.chatimpressiveanimation.option.chatSendingAnimationFadeTime": "訊息發送動畫時長（毫秒）",
+	"text.autoconfig.chatimpressiveanimation.option.enableChatBarAnimation": "啟用聊天欄動畫",
+	"text.autoconfig.chatimpressiveanimation.option.chatBarAnimationFadeTime": "聊天欄動畫時長（毫秒）",
+	"text.autoconfig.chatimpressiveanimation.option.removeMessageIndicator": "刪除系統訊息左側的指示器白條"
 }
