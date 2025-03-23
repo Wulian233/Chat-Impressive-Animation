@@ -22,13 +22,6 @@ logoFile = "icon.png"
     side = "BOTH"
 
 [[dependencies.chatimpressiveanimation]]
-    modId = "architectury"
-    mandatory = true
-    versionRange = "*"
-    ordering = "AFTER"
-    side = "BOTH"
-
-[[dependencies.chatimpressiveanimation]]
     modId = "cloth_config"
     mandatory = true
     versionRange = "*"
