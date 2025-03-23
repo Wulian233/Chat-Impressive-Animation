@@ -3,7 +3,7 @@
 	"id": "chatimpressiveanimation",
 	"version": "${version}",
 	"name": "Chat Impressive Animation",
-	"description": "This mod makes the chat look better by adding animations. Such as opening chat, sending messages. It also removes the message indicator.",
+	"description": "Makes the chat look better by adding animations, such as opening/closing the chat bar, sending messages, etc. It also removes the message indicator",
 	"authors": [
 		"Wulian233, TexTrue"
 	],
@@ -11,13 +11,16 @@
 		"homepage": "https://www.curseforge.com/minecraft/mc-mods/chat-impressive-animation",
 		"sources": "https://github.com/Wulian233/Chat-Impressive-Animation",
 		"issues": "https://github.com/Wulian233/Chat-Impressive-Animation/issues"
-	  },
+	},
 	"license": "MIT",
 	"icon": "icon.png",
 	"environment": "client",
 	"entrypoints": {
 		"client": [
 			"com.wulian.chatimpressiveanimation.fabric.ChatImpressiveAnimationClientFabric"
+		],
+		"modmenu": [
+			"com.wulian.chatimpressiveanimation.fabric.ModMenuImpl"
 		]
 	},
 	"mixins": [
@@ -26,7 +29,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.15.0",
-		"minecraft": "<=1.20.4",
+		"minecraft": ">=1.20 <1.20.5",
 		"cloth-config": "*"
 	}
 }

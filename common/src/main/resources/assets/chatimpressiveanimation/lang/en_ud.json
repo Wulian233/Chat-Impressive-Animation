@@ -1,11 +1,13 @@
 {
 	"fml.menu.mods.info.displayname.chatimpressiveanimation": "uoı̣ʇɐɯı̣uⱯ ǝʌı̣ssǝɹdɯI ʇɐɥƆ",
-	"fml.menu.mods.info.description.chatimpressiveanimation": "˙ɹoʇɐɔı̣puı̣ ǝƃɐssǝɯ ǝɥʇ sǝʌoɯǝɹ osןɐ ʇI ˙sǝƃɐssǝɯ ƃuı̣puǝs 'ʇɐɥɔ ƃuı̣uǝdo sɐ ɥɔnS ˙suoı̣ʇɐɯı̣uɐ ƃuı̣ppɐ ʎq ɹǝʇʇǝq ʞooן ʇɐɥɔ ǝɥʇ sǝʞɐɯ poɯ sı̣ɥꓕ",
+	"fml.menu.mods.info.description.chatimpressiveanimation": "ɹoʇɐɔı̣puı̣ ǝƃɐssǝɯ ǝɥʇ sǝʌoɯǝɹ osןɐ ʇI ˙ɔʇǝ 'sǝƃɐssǝɯ ƃuı̣puǝs 'ɹɐq ʇɐɥɔ ƃuı̣solɔ/ƃuı̣uǝdo sɐ ɥɔnS ˙suoı̣ʇɐɯı̣uɐ ƃuı̣ppɐ ʎq ɹǝʇʇǝq ʞooן ʇɐɥɔ ǝɥʇ sǝʞɐɯ poɯ sı̣ɥꓕ",
 	"modmenu.nameTranslation.chatimpressiveanimation": "uoı̣ʇɐɯı̣uⱯ ǝʌı̣ssǝɹdɯI ʇɐɥƆ",
-	"modmenu.descriptionTranslation.chatimpressiveanimation": "˙ɹoʇɐɔı̣puı̣ ǝƃɐssǝɯ ǝɥʇ sǝʌoɯǝɹ osןɐ ʇI ˙sǝƃɐssǝɯ ƃuı̣puǝs 'ʇɐɥɔ ƃuı̣uǝdo sɐ ɥɔnS ˙suoı̣ʇɐɯı̣uɐ ƃuı̣ppɐ ʎq ɹǝʇʇǝq ʞooן ʇɐɥɔ ǝɥʇ sǝʞɐɯ poɯ sı̣ɥꓕ",
+	"modmenu.descriptionTranslation.chatimpressiveanimation": "ɹoʇɐɔı̣puı̣ ǝƃɐssǝɯ ǝɥʇ sǝʌoɯǝɹ osןɐ ʇI ˙ɔʇǝ 'sǝƃɐssǝɯ ƃuı̣puǝs 'ɹɐq ʇɐɥɔ ƃuı̣solɔ/ƃuı̣uǝdo sɐ ɥɔnS ˙suoı̣ʇɐɯı̣uɐ ƃuı̣ppɐ ʎq ɹǝʇʇǝq ʞooן ʇɐɥɔ ǝɥʇ sǝʞɐɯ poɯ sı̣ɥꓕ",
 
 	"text.autoconfig.chatimpressiveanimation.title": "uoı̣ʇɐɯı̣uⱯ ǝʌı̣ssǝɹdɯI ʇɐɥƆ",
 	"text.autoconfig.chatimpressiveanimation.option.enableChatSendingAnimation": "uoı̣ʇɐɯı̣uɐ ƃuı̣puǝs ǝƃɐssǝɯ ǝןqɐuƎ",
-	"text.autoconfig.chatimpressiveanimation.option.enableChatBarAnimation": "ƃuı̣soןɔ puɐ ƃuı̣uǝdo uǝɥʍ suoı̣ʇɐɯı̣uɐ ɹɐq ʇɐɥɔ ǝןqɐuƎ",
+	"text.autoconfig.chatimpressiveanimation.option.chatSendingAnimationFadeTime": "(sɯ) uoı̣ʇɐɹnp uoı̣ʇɐɯı̣uɐ ƃuı̣puǝs ǝƃɐssǝW",
+	"text.autoconfig.chatimpressiveanimation.option.enableChatBarAnimation": "suoı̣ʇɐɯı̣uɐ ɹɐq ʇɐɥɔ ǝןqɐuƎ",
+	"text.autoconfig.chatimpressiveanimation.option.chatBarAnimationFadeTime": "(sɯ) uoı̣ʇɐɹnp uoı̣ʇɐɯı̣uɐ ɹɐq ʇɐɥƆ",
 	"text.autoconfig.chatimpressiveanimation.option.removeMessageIndicator": "ɹoʇɐɔı̣puı̣ ǝƃɐssǝɯ ǝɥʇ sǝʌoɯǝꓤ"
 }

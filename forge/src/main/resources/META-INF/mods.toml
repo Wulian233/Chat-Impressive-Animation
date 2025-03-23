@@ -10,16 +10,9 @@ displayName = "Chat Impressive Animation"
 displayURL = "https://github.com/Wulian233/Chat-Impressive-Animation/"
 authors = "Wulian233, TexTrue"
 description = '''
-This mod makes the chat look better by adding animations. Such as opening chat, sending messages. It also removes the message indicator.
+Makes the chat look better by adding animations, such as opening/closing the chat bar, sending messages, etc. It also removes the message indicator
 '''
 logoFile = "icon.png"
-
-[[dependencies.chatimpressiveanimation]]
-    modId="forge"
-    mandatory=true
-    versionRange="[41,)"
-    ordering="NONE"
-    side="BOTH"
 
 [[dependencies.chatimpressiveanimation]]
     modId = "minecraft"
@@ -36,8 +29,8 @@ logoFile = "icon.png"
     side = "BOTH"
 
 [[dependencies.chatimpressiveanimation]]
-		modId = "cloth_config"
-		mandatory = true
-		versionRange = "*"
-		ordering = "AFTER"
-		side = "BOTH"
+    modId = "cloth_config"
+    mandatory = true
+    versionRange = "*"
+    ordering = "AFTER"
+    side = "BOTH"

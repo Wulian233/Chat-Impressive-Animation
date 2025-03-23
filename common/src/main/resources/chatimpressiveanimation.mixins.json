@@ -4,6 +4,8 @@
 	"package": "com.wulian.chatimpressiveanimation.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"client": [
+		"ChatHudAccessor",
+		"ChatHudLineAccessor",
 		"ChatHudLineVisibleMixin",
 		"ChatScreenMixin"
 	],
