@@ -9,8 +9,6 @@
 
 [English](README.md) 简体中文
 
-本模组是[Chat Animation](https://github.com/Ezzenix/ChatAnimation) 的非官方多平台移植版。
-
 这个模组添加了一些关于聊天屏幕的动画，如打开/关闭聊天栏，发送消息等。同时删除了系统消息左侧的指示器白条
 
 <a href="https://modrinth.com/project/chat-impressive-animation/">
@@ -32,7 +30,9 @@
 
 对于1.20.4及更低版本，还提供了Forge的支持，但不支持消息发送动画。
 
-## ✅  功能
+注：本模组与现实中的 CIA 无关联，仅为简写名称相同。
+
+## ✅ 功能
 
 所有的功能都可以在配置文件中单独设置！
 
@@ -48,3 +48,10 @@
 <img src="img/message-indicator.jpg" width="550"/>
 
 <img src="img/preview.gif" width="450"/>
+
+## 💖 兼容性
+
+本模组为下列模组写了专门的适配代码：
+
+- [Mod Menu](https://modrinth.com/mod/modmenu)：支持从模组菜单打开配置界面
+- [Raised](https://www.curseforge.com/minecraft/mc-mods/raised)：抬高聊天栏

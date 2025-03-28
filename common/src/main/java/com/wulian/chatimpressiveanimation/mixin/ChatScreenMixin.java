@@ -2,6 +2,7 @@ package com.wulian.chatimpressiveanimation.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.brigadier.Message;
+import com.wulian.chatimpressiveanimation.GlStateManagerHelper;
 import com.wulian.chatimpressiveanimation.config.ConfigUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -49,7 +50,7 @@ public class ChatScreenMixin {
 		offsetY = easedAlpha * FADE_OFFSET * screenFactor;
 
 		if (isClosing) {
-			RenderSystem.enableBlend();
+			GlStateManagerHelper.enableBlend();
 			RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f - easedAlpha);
 		}
 
@@ -97,7 +98,7 @@ public class ChatScreenMixin {
 		context.getMatrices().pop();
 		if (isClosing) {
 			RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-			RenderSystem.disableBlend();
+			GlStateManagerHelper.disableBlend();
 		}
 		if (isClosing && (System.currentTimeMillis() - animationStartTime) >= FADE_TIME) {
 			client.setScreen(null);

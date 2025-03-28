@@ -9,8 +9,6 @@
 
 [简体中文](README_ZH.md) English
 
-[Chat Animation](https://github.com/Ezzenix/ChatAnimation) unofficial architectury port.
-
 Makes the chat look better by adding animations, such as opening/closing the chat bar, sending messages, etc. It also removes the message indicator
 
 <a href="https://modrinth.com/project/chat-impressive-animation/">
@@ -32,6 +30,8 @@ Most importantly, this mod supports Fabric, Forge, and Neoforge, all of which ar
 
 For mc versions 1.20.4 and below, Forge support is also provided, but message sending animations are not supported.
 
+Note: This mod is not related to the real-life CIA, only the abbreviated name is the same.
+
 ## ✅ Features
 
 All features can be individually configured in the configuration file!
@@ -48,3 +48,10 @@ All features can be individually configured in the configuration file!
 <img src="img/message-indicator.jpg" width="550"/>
 
 <img src="img/preview.gif" width="450"/>
+
+## 💖 Compatibility
+
+This mod includes specialized compatibility code for the following mods:
+
+- [Mod Menu](https://modrinth.com/mod/modmenu): Supports opening the config screen directly from the Mod Menu
+- [Raised](https://www.curseforge.com/minecraft/mc-mods/raised): Moved up the chat bar
