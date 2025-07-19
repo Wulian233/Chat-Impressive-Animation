@@ -1,13 +1,13 @@
 package com.wulian.chatimpressiveanimation.mixin;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.brigadier.Message;
-import com.wulian.chatimpressiveanimation.GlStateManagerHelper;
 import com.wulian.chatimpressiveanimation.config.ConfigUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.gui.screen.ChatScreen;
+import net.minecraft.util.math.ColorHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,7 +32,7 @@ public class ChatScreenMixin {
 	public final MinecraftClient client = MinecraftClient.getInstance();
 
 	@Inject(method = "render", at = @At("HEAD"))
-	private void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+	private void renderStart(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		if (!ConfigUtil.getConfig().enableChatBarAnimation) return;
 
 		if (client.player != null && !wasOpenedLastFrame && !client.player.isSleeping()) {
@@ -50,12 +50,35 @@ public class ChatScreenMixin {
 		offsetY = easedAlpha * FADE_OFFSET * screenFactor;
 
 		if (isClosing) {
-			GlStateManagerHelper.enableBlend();
-			RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f - easedAlpha);
+			GlStateManager._enableBlend();
 		}
 
-		context.getMatrices().push();
-		context.getMatrices().translate(0, offsetY, 0);
+		context.getMatrices().pushMatrix();
+		context.getMatrices().translate(0, offsetY);
+	}
+
+	@Inject(
+		method = "render",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/client/gui/screen/Screen;render(Lnet/minecraft/client/gui/DrawContext;IIF)V",
+			shift = At.Shift.BEFORE
+		)
+	)
+	private void renderScreenStart(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+		context.getMatrices().translate(0, offsetY);
+	}
+
+	@Inject(
+		method = "render",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/client/gui/screen/Screen;render(Lnet/minecraft/client/gui/DrawContext;IIF)V",
+			shift = At.Shift.AFTER
+		)
+	)
+	private void renderScreenEnd(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+		context.getMatrices().translate(0, -offsetY);
 	}
 
 	@Unique
@@ -78,7 +101,7 @@ public class ChatScreenMixin {
 		return false;
 	}
 
-	//	Don't remove cancellable attribute!
+	// Don't remove cancellable attribute!
 	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
 	private void onKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
 		if (keyCode == 256) { // ESC
@@ -92,16 +115,28 @@ public class ChatScreenMixin {
 		}
 	}
 
-	@Inject(method = "render", at = @At("TAIL"))
+	@Inject(
+		method = "render",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/client/gui/DrawContext;fill(IIIII)V",
+			shift = At.Shift.AFTER
+		)
+	)
 	private void renderEnd(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		if (!ConfigUtil.getConfig().enableChatBarAnimation) return;
-		context.getMatrices().pop();
+		context.getMatrices().popMatrix();
 		if (isClosing) {
-			RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-			GlStateManagerHelper.disableBlend();
+			ColorHelper.fromFloats(1.0f, 1.0f, 1.0f, 1.0f);
+			GlStateManager._disableBlend();
 		}
 		if (isClosing && (System.currentTimeMillis() - animationStartTime) >= FADE_TIME) {
 			client.setScreen(null);
 		}
+	}
+
+	@Inject(method = "removed", at = @At("HEAD"))
+	private void onClosed(CallbackInfo ci) {
+		wasOpenedLastFrame = false;
 	}
 }
