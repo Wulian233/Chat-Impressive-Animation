@@ -28,8 +28,7 @@
 		"chatimpressiveanimation.fabric.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.15.0",
-		"minecraft": ">=1.21",
+		"minecraft": ">=1.21 <=1.21.5",
 		"cloth-config": "*"
 	}
 }

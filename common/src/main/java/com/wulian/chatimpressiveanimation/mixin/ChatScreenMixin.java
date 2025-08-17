@@ -32,7 +32,7 @@ public class ChatScreenMixin {
 	public final MinecraftClient client = MinecraftClient.getInstance();
 
 	@Inject(method = "render", at = @At("HEAD"))
-	private void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+	private void renderStart(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		if (!ConfigUtil.getConfig().enableChatBarAnimation) return;
 
 		if (client.player != null && !wasOpenedLastFrame && !client.player.isSleeping()) {
@@ -49,13 +49,13 @@ public class ChatScreenMixin {
 		float easedAlpha = EASE_OUT_FACTOR * alpha * alpha * alpha - EASE_IN_OUT_FACTOR * alpha * alpha;
 		offsetY = easedAlpha * FADE_OFFSET * screenFactor;
 
+		context.getMatrices().push();
+		context.getMatrices().translate(0, offsetY, 0);
+
 		if (isClosing) {
 			GlStateManagerHelper.enableBlend();
 			RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f - easedAlpha);
 		}
-
-		context.getMatrices().push();
-		context.getMatrices().translate(0, offsetY, 0);
 	}
 
 	@Unique
@@ -78,7 +78,7 @@ public class ChatScreenMixin {
 		return false;
 	}
 
-	//	Don't remove cancellable attribute!
+	// Don't remove cancellable attribute!
 	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
 	private void onKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
 		if (keyCode == 256) { // ESC
@@ -95,7 +95,9 @@ public class ChatScreenMixin {
 	@Inject(method = "render", at = @At("TAIL"))
 	private void renderEnd(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		if (!ConfigUtil.getConfig().enableChatBarAnimation) return;
+
 		context.getMatrices().pop();
+
 		if (isClosing) {
 			RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 			GlStateManagerHelper.disableBlend();
@@ -103,5 +105,10 @@ public class ChatScreenMixin {
 		if (isClosing && (System.currentTimeMillis() - animationStartTime) >= FADE_TIME) {
 			client.setScreen(null);
 		}
+	}
+
+	@Inject(method = "removed", at = @At("HEAD"))
+	private void onClosed(CallbackInfo ci) {
+		wasOpenedLastFrame = false;
 	}
 }
