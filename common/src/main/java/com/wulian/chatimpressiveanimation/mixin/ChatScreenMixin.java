@@ -7,7 +7,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.util.math.ColorHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -49,36 +48,12 @@ public class ChatScreenMixin {
 		float easedAlpha = EASE_OUT_FACTOR * alpha * alpha * alpha - EASE_IN_OUT_FACTOR * alpha * alpha;
 		offsetY = easedAlpha * FADE_OFFSET * screenFactor;
 
+		context.getMatrices().pushMatrix();
+		context.getMatrices().translate(0, offsetY);
+
 		if (isClosing) {
 			GlStateManager._enableBlend();
 		}
-
-		context.getMatrices().pushMatrix();
-		context.getMatrices().translate(0, offsetY);
-	}
-
-	@Inject(
-		method = "render",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/client/gui/screen/Screen;render(Lnet/minecraft/client/gui/DrawContext;IIF)V",
-			shift = At.Shift.BEFORE
-		)
-	)
-	private void renderScreenStart(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-		context.getMatrices().translate(0, offsetY);
-	}
-
-	@Inject(
-		method = "render",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/client/gui/screen/Screen;render(Lnet/minecraft/client/gui/DrawContext;IIF)V",
-			shift = At.Shift.AFTER
-		)
-	)
-	private void renderScreenEnd(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-		context.getMatrices().translate(0, -offsetY);
 	}
 
 	@Unique
@@ -115,19 +90,13 @@ public class ChatScreenMixin {
 		}
 	}
 
-	@Inject(
-		method = "render",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/client/gui/DrawContext;fill(IIIII)V",
-			shift = At.Shift.AFTER
-		)
-	)
+	@Inject(method = "render", at = @At("TAIL"))
 	private void renderEnd(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		if (!ConfigUtil.getConfig().enableChatBarAnimation) return;
+
 		context.getMatrices().popMatrix();
+
 		if (isClosing) {
-			ColorHelper.fromFloats(1.0f, 1.0f, 1.0f, 1.0f);
 			GlStateManager._disableBlend();
 		}
 		if (isClosing && (System.currentTimeMillis() - animationStartTime) >= FADE_TIME) {
