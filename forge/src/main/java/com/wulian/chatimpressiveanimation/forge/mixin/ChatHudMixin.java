@@ -1,8 +1,8 @@
 package com.wulian.chatimpressiveanimation.forge.mixin;
 
-import com.llamalad7.mixinextras.sugar.Local;
 import com.wulian.chatimpressiveanimation.ChatImpressiveAnimationExpectPlatform;
 import com.wulian.chatimpressiveanimation.config.ConfigUtil;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.gui.hud.MessageIndicator;
@@ -16,7 +16,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
@@ -31,18 +30,7 @@ public class ChatHudMixin {
 	@Unique private final ArrayList<Long> messageTimestamps = new ArrayList<>();
 
 	@Unique private final int chatSendingAnimationFadeTime = ConfigUtil.getConfig().chatSendingAnimationFadeTime;
-
-	@Unique private int chatLineIndex;
 	@Unique private int chatDisplacementY = 0;
-
-	@Inject(method = "render", at = @At(
-		value = "INVOKE",
-		target = "Lnet/minecraft/client/gui/hud/ChatHudLine$Visible;addedTime()I"
-	))
-	public void getChatLineIndex(CallbackInfo ci, @Local(ordinal = 13) int chatLineIndex) {
-		// Capture which chat line is currently being rendered
-		this.chatLineIndex = chatLineIndex;
-	}
 
 	@Unique
 	private void calculateYOffset() {
@@ -52,37 +40,48 @@ public class ChatHudMixin {
 			// scale * lineHeight
 			float fadeOffsetYScale = 0.8f;
 			float maxDisplacement = (float)lineHeight * fadeOffsetYScale;
-			long timestamp = messageTimestamps.get(chatLineIndex);
+			long timestamp = messageTimestamps.get(0);
 			long timeAlive = System.currentTimeMillis() - timestamp;
-			if (chatLineIndex == 0 && timeAlive < chatSendingAnimationFadeTime && this.scrolledLines == 0) {
+			if (timeAlive < chatSendingAnimationFadeTime && this.scrolledLines == 0) {
 				chatDisplacementY = (int)(maxDisplacement - (((float) timeAlive / chatSendingAnimationFadeTime) * maxDisplacement));
+			} else {
+				chatDisplacementY = 0;
 			}
-		} catch (Exception ignored) {}
+		} catch (Exception ignored) {
+			chatDisplacementY = 0;
+		}
 	}
 
-	@ModifyArg(method = "render", index = 1, at = @At(
-		value = "INVOKE",
-		target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V",
-		ordinal = 1
-	))
-	private float applyYOffset(float y) {
-		if (!ConfigUtil.getConfig().enableChatSendingAnimation) return y;
-		// Apply the offset
+	@Inject(method = "render", at = @At("HEAD"))
+	private void onRenderStart(DrawContext context, int currentTick, int mouseX, int mouseY, CallbackInfo ci) {
+		if (!ConfigUtil.getConfig().enableChatSendingAnimation) return;
 		calculateYOffset();
 
-		// Raised mod compatibility
+		// Apply Raised mod compatibility
+		float raisedOffset = 0;
 		if (ChatImpressiveAnimationExpectPlatform.getObjectShareItem("raised:hud") instanceof Integer distance) {
-			// for Raised 1.2.0+
-			y -= distance;
+			raisedOffset -= distance;
 		} else if (ChatImpressiveAnimationExpectPlatform.getObjectShareItem("raised:distance") instanceof Integer distance) {
-			y -= distance;
+			raisedOffset -= distance;
 		}
-
-		return y + chatDisplacementY;
+		context.getMatrices().translate(0, chatDisplacementY + raisedOffset, 0);
 	}
 
-	@Inject(method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;ILnet/minecraft/client/gui/hud/MessageIndicator;Z)V", at = @At("TAIL"))
-	private void addMessage(Text message, MessageSignatureData signature, int ticks, MessageIndicator indicator, boolean refresh, CallbackInfo ci) {
+	@Inject(method = "render", at = @At("TAIL"))
+	private void onRenderEnd(DrawContext context, int currentTick, int mouseX, int mouseY, CallbackInfo ci) {
+		// Apply Raised mod compatibility
+		float raisedOffset = 0;
+		if (ChatImpressiveAnimationExpectPlatform.getObjectShareItem("raised:hud") instanceof Integer distance) {
+			raisedOffset -= distance;
+		} else if (ChatImpressiveAnimationExpectPlatform.getObjectShareItem("raised:distance") instanceof Integer distance) {
+			raisedOffset -= distance;
+		}
+
+		context.getMatrices().translate(0, -(chatDisplacementY + raisedOffset), 0);
+	}
+
+	@Inject(method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;Lnet/minecraft/client/gui/hud/MessageIndicator;)V", at = @At("TAIL"))
+	private void addMessage(Text message, MessageSignatureData signatureData, MessageIndicator indicator, CallbackInfo ci) {
 		messageTimestamps.add(0, System.currentTimeMillis());
 		while (this.messageTimestamps.size() > this.visibleMessages.size()) {
 			this.messageTimestamps.remove(this.messageTimestamps.size() - 1);

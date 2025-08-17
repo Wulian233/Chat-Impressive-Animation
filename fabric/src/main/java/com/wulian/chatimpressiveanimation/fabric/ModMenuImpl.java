@@ -2,8 +2,8 @@ package com.wulian.chatimpressiveanimation.fabric;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import me.shedaniel.autoconfig.AutoConfig;
 import com.wulian.chatimpressiveanimation.config.ModConfigs;
+import me.shedaniel.autoconfig.AutoConfig;
 
 public class ModMenuImpl implements ModMenuApi {
 	@Override
