@@ -9,7 +9,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 import java.util.function.Function;
@@ -17,7 +17,7 @@ import java.util.function.Function;
 @Mod(value = ChatImpressiveAnimation.MOD_ID, dist = Dist.CLIENT)
 public class ChatImpressiveAnimationClientNeoForge {
     public ChatImpressiveAnimationClientNeoForge() {
-        if (FMLLoader.getDist().isClient()) {
+        if (FMLEnvironment.getDist().isClient()) {
 			ConfigUtil.getConfig();
 
 			registerConfigScreen(ChatImpressiveAnimation.MOD_ID, screen -> AutoConfig.getConfigScreen(ModConfigs.class, screen).get());

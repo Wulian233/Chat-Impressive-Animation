@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.gui.screen.ChatScreen;
+import net.minecraft.client.input.KeyInput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -76,10 +77,9 @@ public class ChatScreenMixin {
 		return false;
 	}
 
-	// Don't remove cancellable attribute!
-	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
-	private void onKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
-		if (keyCode == 256) { // ESC
+	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true, require = 0)
+	private void onKeyPressed(KeyInput input, CallbackInfoReturnable<Boolean> cir) {
+		if (input.key() == 256) { // ESC
 			if (ConfigUtil.getConfig().enableChatBarAnimation && !hasActiveChatMessages()) {
 				isClosing = true;
 				animationStartTime = System.currentTimeMillis();
