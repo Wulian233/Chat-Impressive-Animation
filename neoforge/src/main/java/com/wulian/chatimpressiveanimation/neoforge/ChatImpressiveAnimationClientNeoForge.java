@@ -4,7 +4,7 @@ import com.wulian.chatimpressiveanimation.ChatImpressiveAnimation;
 import com.wulian.chatimpressiveanimation.config.ConfigUtil;
 import com.wulian.chatimpressiveanimation.config.ModConfigs;
 import me.shedaniel.autoconfig.AutoConfig;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;

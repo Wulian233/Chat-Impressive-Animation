@@ -1,11 +1,11 @@
 package com.wulian.chatimpressiveanimation.mixin;
 
-import net.minecraft.client.gui.hud.ChatHudLine;
+import net.minecraft.client.GuiMessage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(ChatHudLine.class)
+@Mixin(GuiMessage.class)
 public interface ChatHudLineAccessor {
-	@Accessor("creationTick")
+	@Accessor("addedTime")
 	int getCreationTick();
 }

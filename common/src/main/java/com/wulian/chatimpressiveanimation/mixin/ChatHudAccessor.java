@@ -1,14 +1,14 @@
 package com.wulian.chatimpressiveanimation.mixin;
 
 import com.mojang.brigadier.Message;
-import net.minecraft.client.gui.hud.ChatHud;
+import net.minecraft.client.gui.components.ChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.List;
 
-@Mixin(ChatHud.class)
+@Mixin(ChatComponent.class)
 public interface ChatHudAccessor {
-	@Accessor("visibleMessages")
+	@Accessor("trimmedMessages")
 	List<Message> getVisibleMessages();
 }

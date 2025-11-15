@@ -2,12 +2,12 @@ package com.wulian.chatimpressiveanimation.neoforge.mixin;
 
 import com.wulian.chatimpressiveanimation.ChatImpressiveAnimationExpectPlatform;
 import com.wulian.chatimpressiveanimation.config.ConfigUtil;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.ChatHud;
-import net.minecraft.client.gui.hud.ChatHudLine;
-import net.minecraft.client.gui.hud.MessageIndicator;
-import net.minecraft.network.message.MessageSignatureData;
-import net.minecraft.text.Text;
+import net.minecraft.client.GuiMessage;
+import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MessageSignature;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.spongepowered.asm.mixin.Final;
@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
-@Mixin(ChatHud.class)
+@Mixin(ChatComponent.class)
 public class ChatHudMixin {
-	@Shadow private int scrolledLines;
-	@Shadow @Final private List<ChatHudLine.Visible> visibleMessages;
+	@Shadow private int chatScrollbarPos;
+	@Shadow @Final private List<GuiMessage.Line> trimmedMessages;
 	@Shadow private int getLineHeight() { return 0; }
 	@Unique private final ArrayList<Long> messageTimestamps = new ArrayList<>();
 
@@ -42,7 +42,7 @@ public class ChatHudMixin {
 			float maxDisplacement = (float)lineHeight * fadeOffsetYScale;
 			long timestamp = messageTimestamps.getFirst();
 			long timeAlive = System.currentTimeMillis() - timestamp;
-			if (timeAlive < chatSendingAnimationFadeTime && this.scrolledLines == 0) {
+			if (timeAlive < chatSendingAnimationFadeTime && this.chatScrollbarPos == 0) {
 				chatDisplacementY = (int)(maxDisplacement - (((float) timeAlive / chatSendingAnimationFadeTime) * maxDisplacement));
 			} else {
 				chatDisplacementY = 0;
@@ -53,7 +53,7 @@ public class ChatHudMixin {
 	}
 
 	@Inject(method = "render", at = @At("HEAD"))
-	private void onRenderStart(DrawContext context, int currentTick, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
+	private void onRenderStart(GuiGraphics context, int currentTick, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
 		if (!ConfigUtil.getConfig().enableChatSendingAnimation) return;
 		calculateYOffset();
 
@@ -65,11 +65,11 @@ public class ChatHudMixin {
 			raisedOffset -= distance;
 		}
 
-		context.getMatrices().translate(0, chatDisplacementY + raisedOffset);
+		context.pose().translate(0, chatDisplacementY + raisedOffset);
 	}
 
 	@Inject(method = "render", at = @At("TAIL"))
-	private void onRenderEnd(DrawContext context, int currentTick, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
+	private void onRenderEnd(GuiGraphics context, int currentTick, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
 		// Apply Raised mod compatibility
 		float raisedOffset = 0;
 		if (ChatImpressiveAnimationExpectPlatform.getObjectShareItem("raised:hud") instanceof Integer distance) {
@@ -78,13 +78,13 @@ public class ChatHudMixin {
 			raisedOffset -= distance;
 		}
 
-		context.getMatrices().translate(0, -(chatDisplacementY + raisedOffset));
+		context.pose().translate(0, -(chatDisplacementY + raisedOffset));
 	}
 
-	@Inject(method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;Lnet/minecraft/client/gui/hud/MessageIndicator;)V", at = @At("TAIL"))
-	private void addMessage(Text message, MessageSignatureData signatureData, MessageIndicator indicator, CallbackInfo ci) {
+	@Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V", at = @At("TAIL"))
+	private void addMessage(Component message, MessageSignature signatureData, GuiMessageTag indicator, CallbackInfo ci) {
 		messageTimestamps.addFirst(System.currentTimeMillis());
-		while (this.messageTimestamps.size() > this.visibleMessages.size()) {
+		while (this.messageTimestamps.size() > this.trimmedMessages.size()) {
 			this.messageTimestamps.removeLast();
 		}
 	}

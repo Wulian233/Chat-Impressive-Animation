@@ -3,11 +3,11 @@ package com.wulian.chatimpressiveanimation.mixin;
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.brigadier.Message;
 import com.wulian.chatimpressiveanimation.config.ConfigUtil;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.ChatHudLine;
-import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.GuiMessage;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.input.KeyEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,10 +29,10 @@ public class ChatScreenMixin {
 	private static final float EASE_IN_OUT_FACTOR = 1.70158f;
 	private static final float EASE_OUT_FACTOR = EASE_IN_OUT_FACTOR + 1;
 
-	public final MinecraftClient client = MinecraftClient.getInstance();
+	public final Minecraft client = Minecraft.getInstance();
 
 	@Inject(method = "render", at = @At("HEAD"))
-	private void renderStart(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+	private void renderStart(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		if (!ConfigUtil.getConfig().enableChatBarAnimation) return;
 
 		if (client.player != null && !wasOpenedLastFrame && !client.player.isSleeping()) {
@@ -41,7 +41,7 @@ public class ChatScreenMixin {
 			isClosing = false;
 		}
 
-		float screenFactor = (float) client.getWindow().getHeight() / 1080;
+		float screenFactor = (float) client.getWindow().getScreenHeight() / 1080;
 		float elapsedTime = (float) (System.currentTimeMillis() - animationStartTime);
 		float alpha = isClosing ? elapsedTime / FADE_TIME : 1 - (elapsedTime / FADE_TIME);
 		alpha = Math.min(1, Math.max(0, alpha));
@@ -49,8 +49,8 @@ public class ChatScreenMixin {
 		float easedAlpha = EASE_OUT_FACTOR * alpha * alpha * alpha - EASE_IN_OUT_FACTOR * alpha * alpha;
 		offsetY = easedAlpha * FADE_OFFSET * screenFactor;
 
-		context.getMatrices().pushMatrix();
-		context.getMatrices().translate(0, offsetY);
+		context.pose().pushMatrix();
+		context.pose().translate(0, offsetY);
 
 		if (isClosing) {
 			GlStateManager._enableBlend();
@@ -59,15 +59,15 @@ public class ChatScreenMixin {
 
 	@Unique
 	private boolean hasActiveChatMessages() {
-		if (client.inGameHud == null || client.inGameHud.getChatHud() == null) return false;
+		if (client.gui == null || client.gui.getChat() == null) return false;
 
-		List<Message> messages = ((ChatHudAccessor) client.inGameHud.getChatHud()).getVisibleMessages();
+		List<Message> messages = ((ChatHudAccessor) client.gui.getChat()).getVisibleMessages();
 
-		int ticks = client.inGameHud.getTicks();
+		int ticks = client.gui.getGuiTicks();
 		final int fadeTicks = 200;
 
 		for (Object msg : messages) {
-			if (msg instanceof ChatHudLine line) {
+			if (msg instanceof GuiMessage line) {
 				int creationTick = ((ChatHudLineAccessor) (Object) line).getCreationTick();
 				if (ticks - creationTick < fadeTicks) {
 					return true;
@@ -78,7 +78,7 @@ public class ChatScreenMixin {
 	}
 
 	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true, require = 0)
-	private void onKeyPressed(KeyInput input, CallbackInfoReturnable<Boolean> cir) {
+	private void onKeyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> cir) {
 		if (input.key() == 256) { // ESC
 			if (ConfigUtil.getConfig().enableChatBarAnimation && !hasActiveChatMessages()) {
 				isClosing = true;
@@ -91,10 +91,10 @@ public class ChatScreenMixin {
 	}
 
 	@Inject(method = "render", at = @At("TAIL"))
-	private void renderEnd(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+	private void renderEnd(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		if (!ConfigUtil.getConfig().enableChatBarAnimation) return;
 
-		context.getMatrices().popMatrix();
+		context.pose().popMatrix();
 
 		if (isClosing) {
 			GlStateManager._disableBlend();
