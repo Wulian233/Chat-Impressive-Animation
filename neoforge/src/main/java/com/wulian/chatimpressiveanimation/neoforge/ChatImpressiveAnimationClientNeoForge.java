@@ -3,7 +3,7 @@ package com.wulian.chatimpressiveanimation.neoforge;
 import com.wulian.chatimpressiveanimation.ChatImpressiveAnimation;
 import com.wulian.chatimpressiveanimation.config.ConfigUtil;
 import com.wulian.chatimpressiveanimation.config.ModConfigs;
-import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.AutoConfigClient;
 import net.minecraft.client.gui.screens.Screen;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
@@ -20,7 +20,7 @@ public class ChatImpressiveAnimationClientNeoForge {
         if (FMLEnvironment.getDist().isClient()) {
 			ConfigUtil.getConfig();
 
-			registerConfigScreen(ChatImpressiveAnimation.MOD_ID, screen -> AutoConfig.getConfigScreen(ModConfigs.class, screen).get());
+			registerConfigScreen(ChatImpressiveAnimation.MOD_ID, screen -> AutoConfigClient.getConfigScreen(ModConfigs.class, screen).get());
 
 			ChatImpressiveAnimation.LOGGER.info("Chat Impressive Animation is loaded!");
         }
