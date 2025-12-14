@@ -6,6 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.GuiMessage;
 import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
@@ -53,7 +54,7 @@ public class ChatHudMixin {
 	}
 
 	@Inject(method = "render", at = @At("HEAD"))
-	private void onRenderStart(GuiGraphics context, int currentTick, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
+	private void onRenderStart(GuiGraphics context, Font font, int currentTick, int mouseX, int mouseY, boolean focused, boolean open, CallbackInfo ci) {
 		if (!ConfigUtil.getConfig().enableChatSendingAnimation) return;
 		calculateYOffset();
 
@@ -69,7 +70,7 @@ public class ChatHudMixin {
 	}
 
 	@Inject(method = "render", at = @At("TAIL"))
-	private void onRenderEnd(GuiGraphics context, int currentTick, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
+	private void onRenderEnd(GuiGraphics context, Font font, int currentTick, int mouseX, int mouseY, boolean focused, boolean open, CallbackInfo ci) {
 		// Apply Raised mod compatibility
 		float raisedOffset = 0;
 		if (ChatImpressiveAnimationExpectPlatform.getObjectShareItem("raised:hud") instanceof Integer distance) {
