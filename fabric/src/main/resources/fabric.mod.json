@@ -24,8 +24,7 @@
 		]
 	},
 	"mixins": [
-		"chatimpressiveanimation.mixins.json",
-		"chatimpressiveanimation.fabric.mixins.json"
+		"chatimpressiveanimation.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.15.0",

@@ -1,4 +1,4 @@
-package com.wulian.chatimpressiveanimation.neoforge.mixin;
+package com.wulian.chatimpressiveanimation.mixin;
 
 import com.wulian.chatimpressiveanimation.ChatImpressiveAnimationExpectPlatform;
 import com.wulian.chatimpressiveanimation.config.ConfigUtil;
@@ -8,8 +8,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MessageSignature;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-@OnlyIn(Dist.CLIENT)
 @Mixin(ChatComponent.class)
 public class ChatHudMixin {
 	@Shadow private int chatScrollbarPos;
