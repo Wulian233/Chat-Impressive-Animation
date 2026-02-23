@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(GuiMessage.Line.class)
-public class ChatHudLineVisibleMixin {
+public class GuiMessageMixin {
 	@Inject(method = "tag", at = @At("HEAD"), cancellable = true)
 	private void injectIndicator(CallbackInfoReturnable<GuiMessageTag> cir) {
 		if (ConfigUtil.getConfig().removeMessageIndicator){

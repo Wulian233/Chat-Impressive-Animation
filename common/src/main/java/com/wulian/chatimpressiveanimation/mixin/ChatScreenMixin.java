@@ -1,6 +1,5 @@
 package com.wulian.chatimpressiveanimation.mixin;
 
-import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.brigadier.Message;
 import com.wulian.chatimpressiveanimation.config.ConfigUtil;
 import net.minecraft.client.GuiMessage;
@@ -51,16 +50,10 @@ public class ChatScreenMixin {
 
 		context.pose().pushMatrix();
 		context.pose().translate(0, offsetY);
-
-		if (isClosing) {
-			GlStateManager._enableBlend();
-		}
 	}
 
 	@Unique
 	private boolean hasActiveChatMessages() {
-		if (client.gui == null || client.gui.getChat() == null) return false;
-
 		List<Message> messages = ((ChatHudAccessor) client.gui.getChat()).getVisibleMessages();
 
 		int ticks = client.gui.getGuiTicks();
@@ -96,9 +89,6 @@ public class ChatScreenMixin {
 
 		context.pose().popMatrix();
 
-		if (isClosing) {
-			GlStateManager._disableBlend();
-		}
 		if (isClosing && (System.currentTimeMillis() - animationStartTime) >= FADE_TIME) {
 			client.setScreen(null);
 		}
