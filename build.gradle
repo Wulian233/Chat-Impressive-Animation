@@ -1,6 +1,8 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "1.11-SNAPSHOT" apply false
+    id "dev.architectury.loom" version "1.13-SNAPSHOT" apply false
     id "com.gradleup.shadow" version "9.+" apply false
 }
 
@@ -19,13 +21,19 @@ subprojects {
             mappings "dev.architectury:yarn-mappings-patch-neoforge:${project.yarn_patch}"
 		}
     }
+
+	tasks.withType(ShadowJar).configureEach {
+		zip64 = true
+	}
 }
 
 allprojects {
     apply plugin: "java"
     apply plugin: "architectury-plugin"
 
-    archivesBaseName = rootProject.archives_base_name
+    base {
+        archivesName = rootProject.archives_base_name
+    }
     version = "${rootProject.mod_version}+mc${rootProject.minecraft_version}"
     group = rootProject.maven_group
 
