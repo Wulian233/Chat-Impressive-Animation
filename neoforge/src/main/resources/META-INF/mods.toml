@@ -17,9 +17,6 @@ logoFile = "icon.png"
 [[mixins]]
 config = "chatimpressiveanimation.mixins.json"
 
-[[mixins]]
-config = "chatimpressiveanimation.neoforge.mixins.json"
-
 [[dependencies.chatimpressiveanimation]]
 modId = "minecraft"
 type = "required"
