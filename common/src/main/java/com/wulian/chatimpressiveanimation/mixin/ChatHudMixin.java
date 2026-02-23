@@ -1,9 +1,7 @@
-package com.wulian.chatimpressiveanimation.fabric.mixin;
+package com.wulian.chatimpressiveanimation.mixin;
 
 import com.wulian.chatimpressiveanimation.ChatImpressiveAnimationExpectPlatform;
 import com.wulian.chatimpressiveanimation.config.ConfigUtil;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
@@ -21,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-@Environment(EnvType.CLIENT)
 @Mixin(ChatHud.class)
 public class ChatHudMixin {
 	@Shadow private int scrolledLines;
