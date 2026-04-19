@@ -23,7 +23,7 @@ public class ChatScreenMixin {
 	@Unique private long animationStartTime = 0;
 	@Unique private float offsetY = 0;
 
-	private static final int FADE_TIME = ConfigUtil.getConfig().chatBarAnimationFadeTime;
+	private static int FADE_TIME = ConfigUtil.getConfig().chatBarAnimationFadeTime;
 	private static final float FADE_OFFSET = 10;
 	private static final float EASE_IN_OUT_FACTOR = 1.70158f;
 	private static final float EASE_OUT_FACTOR = EASE_IN_OUT_FACTOR + 1;
