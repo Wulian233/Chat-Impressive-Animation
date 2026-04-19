@@ -11,9 +11,9 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Setup Gradle wrapper
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
         with:
-          gradle-version: 9.2.0
+          gradle-version: 9.4.0
 
       - name: Setup Java ${{ matrix.java }}
         uses: actions/setup-java@v5
@@ -27,13 +27,13 @@ jobs:
           ./gradlew build
 
       - name: Upload Fabric artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: fabric-artifacts
           path: fabric/build/libs/*.jar
 
       - name: Upload NeoForge artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: neoforge-artifacts
           path: neoforge/build/libs/*.jar
