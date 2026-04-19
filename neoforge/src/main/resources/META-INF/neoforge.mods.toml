@@ -20,7 +20,7 @@ config = "chatimpressiveanimation.mixins.json"
 [[dependencies.chatimpressiveanimation]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.11,)"
+versionRange = "[1.21.11,26.1)"
 ordering = "NONE"
 side = "BOTH"
 

@@ -23,7 +23,7 @@ public class ChatScreenMixin {
 	@Unique private long animationStartTime = 0;
 	@Unique private float offsetY = 0;
 
-	private static final int FADE_TIME = ConfigUtil.getConfig().chatBarAnimationFadeTime;
+	private static int FADE_TIME = ConfigUtil.getConfig().chatBarAnimationFadeTime;
 	private static final float FADE_OFFSET = 10;
 	private static final float EASE_IN_OUT_FACTOR = 1.70158f;
 	private static final float EASE_OUT_FACTOR = EASE_IN_OUT_FACTOR + 1;
@@ -70,16 +70,23 @@ public class ChatScreenMixin {
 		return false;
 	}
 
-	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true, require = 0)
+	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
 	private void onKeyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> cir) {
 		if (input.key() == 256) { // ESC
+			if (isClosing) {
+				cir.setReturnValue(true);
+				return;
+			}
+
 			if (ConfigUtil.getConfig().enableChatBarAnimation && !hasActiveChatMessages()) {
 				isClosing = true;
 				animationStartTime = System.currentTimeMillis();
+
+				cir.setReturnValue(true);
 			} else {
 				client.setScreen(null);
+				cir.setReturnValue(true);
 			}
-			cir.cancel();
 		}
 	}
 
