@@ -25,8 +25,6 @@ public class ChatHudMixin {
 	@Shadow @Final private List<ChatHudLine.Visible> visibleMessages;
 	@Shadow private int getLineHeight() { return 0; }
 	@Unique private final ArrayList<Long> messageTimestamps = new ArrayList<>();
-
-	@Unique private final int chatSendingAnimationFadeTime = ConfigUtil.getConfig().chatSendingAnimationFadeTime;
 	@Unique private int chatDisplacementY = 0;
 
 	@Unique
@@ -34,6 +32,7 @@ public class ChatHudMixin {
 		// Calculate current required offset to achieve slide in from bottom effect
 		try {
 			int lineHeight = this.getLineHeight();
+			int chatSendingAnimationFadeTime = ConfigUtil.getConfig().chatSendingAnimationFadeTime;
 			// scale * lineHeight
 			float fadeOffsetYScale = 0.8f;
 			float maxDisplacement = (float)lineHeight * fadeOffsetYScale;
