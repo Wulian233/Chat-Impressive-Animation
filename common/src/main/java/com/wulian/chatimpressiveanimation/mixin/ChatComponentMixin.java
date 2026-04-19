@@ -2,11 +2,12 @@ package com.wulian.chatimpressiveanimation.mixin;
 
 import com.wulian.chatimpressiveanimation.ChatImpressiveAnimationExpectPlatform;
 import com.wulian.chatimpressiveanimation.config.ConfigUtil;
-import net.minecraft.client.GuiMessage;
-import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.client.multiplayer.chat.GuiMessageSource;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MessageSignature;
 import org.spongepowered.asm.mixin.Final;
@@ -50,8 +51,11 @@ public class ChatComponentMixin {
 		}
 	}
 
-	@Inject(method = "render", at = @At("HEAD"))
-	private void onRenderStart(GuiGraphics context, Font font, int currentTick, int mouseX, int mouseY, boolean focused, boolean open, CallbackInfo ci) {
+	@Inject(
+			method = "extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V",
+			at = @At("HEAD")
+	)
+	private void onRenderStart(GuiGraphicsExtractor graphics, Font font, int ticks, int mouseX, int mouseY, ChatComponent.DisplayMode displayMode, boolean changeCursorOnInsertions, CallbackInfo ci) {
 		if (!ConfigUtil.getConfig().enableChatSendingAnimation) return;
 		calculateYOffset();
 
@@ -63,11 +67,14 @@ public class ChatComponentMixin {
 			raisedOffset -= distance;
 		}
 
-		context.pose().translate(0, chatDisplacementY + raisedOffset);
+		graphics.pose().translate(0, chatDisplacementY + raisedOffset);
 	}
 
-	@Inject(method = "render", at = @At("TAIL"))
-	private void onRenderEnd(GuiGraphics context, Font font, int currentTick, int mouseX, int mouseY, boolean focused, boolean open, CallbackInfo ci) {
+	@Inject(
+			method = "extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V",
+			at = @At("TAIL")
+	)
+	private void onRenderEnd(GuiGraphicsExtractor graphics, Font font, int ticks, int mouseX, int mouseY, ChatComponent.DisplayMode displayMode, boolean changeCursorOnInsertions, CallbackInfo ci) {
 		// Apply Raised mod compatibility
 		float raisedOffset = 0;
 		if (ChatImpressiveAnimationExpectPlatform.getObjectShareItem("raised:hud") instanceof Integer distance) {
@@ -76,12 +83,15 @@ public class ChatComponentMixin {
 			raisedOffset -= distance;
 		}
 
-		context.pose().translate(0, -(chatDisplacementY + raisedOffset));
+		graphics.pose().translate(0, -(chatDisplacementY + raisedOffset));
 	}
 
-	@Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V", at = @At("TAIL"))
-	private void addMessage(Component message, MessageSignature signatureData, GuiMessageTag indicator, CallbackInfo ci) {
-		messageTimestamps.addFirst(System.currentTimeMillis());
+	@Inject(
+			method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/multiplayer/chat/GuiMessageSource;Lnet/minecraft/client/multiplayer/chat/GuiMessageTag;)V",
+			at = @At("TAIL")
+	)
+	private void addMessage(Component contents, MessageSignature signature, GuiMessageSource source, GuiMessageTag tag, CallbackInfo ci) {
+	messageTimestamps.addFirst(System.currentTimeMillis());
 		while (this.messageTimestamps.size() > this.trimmedMessages.size()) {
 			this.messageTimestamps.removeLast();
 		}

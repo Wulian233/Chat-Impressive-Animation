@@ -2,11 +2,11 @@ package com.wulian.chatimpressiveanimation.mixin;
 
 import com.mojang.brigadier.Message;
 import com.wulian.chatimpressiveanimation.config.ConfigUtil;
-import net.minecraft.client.GuiMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -30,8 +30,8 @@ public class ChatScreenMixin {
 
 	public final Minecraft client = Minecraft.getInstance();
 
-	@Inject(method = "render", at = @At("HEAD"))
-	private void renderStart(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+	@Inject(method = "extractRenderState", at = @At("HEAD"))
+	private void renderStart(GuiGraphicsExtractor context, int mouseX, int mouseY, float a, CallbackInfo ci) {
 		if (!ConfigUtil.getConfig().enableChatBarAnimation) return;
 
 		if (client.player != null && !wasOpenedLastFrame && !client.player.isSleeping()) {
@@ -43,7 +43,7 @@ public class ChatScreenMixin {
 		float screenFactor = (float) client.getWindow().getScreenHeight() / 1080;
 		float elapsedTime = (float) (System.currentTimeMillis() - animationStartTime);
 		float alpha = isClosing ? elapsedTime / FADE_TIME : 1 - (elapsedTime / FADE_TIME);
-		alpha = Math.min(1, Math.max(0, alpha));
+		alpha = Math.clamp(alpha, 0, 1);
 
 		float easedAlpha = EASE_OUT_FACTOR * alpha * alpha * alpha - EASE_IN_OUT_FACTOR * alpha * alpha;
 		offsetY = easedAlpha * FADE_OFFSET * screenFactor;
@@ -70,24 +70,31 @@ public class ChatScreenMixin {
 		return false;
 	}
 
-	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true, require = 0)
-	private void onKeyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> cir) {
-		if (input.key() == 256) { // ESC
+	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
+	private void onKeyPressed(KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
+		if (event.key() == 256) { // ESC
+			if (isClosing) {
+				cir.setReturnValue(true);
+				return;
+			}
+
 			if (ConfigUtil.getConfig().enableChatBarAnimation && !hasActiveChatMessages()) {
 				isClosing = true;
 				animationStartTime = System.currentTimeMillis();
+
+				cir.setReturnValue(true);
 			} else {
 				client.setScreen(null);
+				cir.setReturnValue(true);
 			}
-			cir.cancel();
 		}
 	}
 
-	@Inject(method = "render", at = @At("TAIL"))
-	private void renderEnd(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+	@Inject(method = "extractRenderState", at = @At("TAIL"))
+	private void renderEnd(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
 		if (!ConfigUtil.getConfig().enableChatBarAnimation) return;
 
-		context.pose().popMatrix();
+		graphics.pose().popMatrix();
 
 		if (isClosing && (System.currentTimeMillis() - animationStartTime) >= FADE_TIME) {
 			client.setScreen(null);

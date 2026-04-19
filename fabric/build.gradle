@@ -1,10 +1,10 @@
 architectury {
-    platformSetupLoomIde()
-    fabric()
+	platformSetupLoomIde()
+	fabric()
 }
 
 base {
-    archivesName = rootProject.archives_base_name + "-fabric"
+	archivesName = rootProject.archives_base_name + "-fabric"
 }
 
 configurations {
@@ -12,9 +12,10 @@ configurations {
 		canBeResolved = true
 		canBeConsumed = false
 	}
-    compileClasspath.extendsFrom common
-    runtimeClasspath.extendsFrom common
-    developmentFabric.extendsFrom common
+	compileClasspath.extendsFrom common
+	runtimeClasspath.extendsFrom common
+	developmentFabric.extendsFrom common
+
 	shadowBundle {
 		canBeResolved = true
 		canBeConsumed = false
@@ -26,36 +27,34 @@ repositories {
 }
 
 dependencies {
-    implementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    compileOnly "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-    compileOnly "me.shedaniel.cloth:cloth-config-fabric:${rootProject.clothconfig_version}"
-    compileOnly("com.terraformersmc:modmenu:${rootProject.modmenu_version}") { transitive = false }
+	implementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+	implementation "me.shedaniel.cloth:cloth-config-fabric:${rootProject.clothconfig_version}"
+	implementation("com.terraformersmc:modmenu:${rootProject.modmenu_version}") { transitive = false }
 
-    common(project(path: ":common", configuration: "namedElements")) { transitive = false }
+	common(project(path: ":common", configuration: "runtimeElements")) { transitive = false }
 	shadowBundle(project(path: ":common", configuration: "transformProductionFabric")) { transitive = false }
 }
 
 processResources {
-    inputs.property "version", project.version
+	inputs.property "version", project.version
 
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
-    }
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
 }
 
 shadowJar {
 	configurations = [project.configurations.shadowBundle]
-    archiveClassifier.set("dev-shadow")
+	archiveClassifier.set("dev-shadow")
 }
 
 jar {
-//    inputFile.set shadowJar.archiveFile
-    dependsOn shadowJar
-    archiveClassifier.set("dev")
+	archiveClassifier.set(null)
 }
 
 sourcesJar {
-    def commonSources = project(":common").sourcesJar
-    dependsOn commonSources
-    from commonSources.archiveFile.map { zipTree(it) }
+	def commonSources = project(":common").sourcesJar
+	dependsOn commonSources
+	from commonSources.archiveFile.map { zipTree(it) }
 }
